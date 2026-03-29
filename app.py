@@ -16,6 +16,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+# Create tables on startup (works with gunicorn too)
+with app.app_context():
+    db.create_all()
+
 # Model
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
