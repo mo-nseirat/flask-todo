@@ -4,194 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo App</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         :root {
-            --bg: #0f0f0f;
-            --surface: #1a1a1a;
-            --border: #2a2a2a;
-            --accent: #00ff88;
-            --accent-dim: #00ff8822;
-            --text: #e8e8e8;
-            --muted: #666;
-            --danger: #ff4444;
+            --bg: #0f0f0f; --surface: #1a1a1a; --border: #2a2a2a;
+            --accent: #00ff88; --text: #e8e8e8; --muted: #666;
+            --high: #ff4444; --medium: #ffaa00; --low: #00ff88;
         }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 60px 20px;
-        }
-
+        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 60px 20px; }
         .container { width: 100%; max-width: 640px; }
+        header { margin-bottom: 40px; }
+        header h1 { font-family: 'Space Mono', monospace; font-size: 2rem; color: var(--accent); }
+        header p { color: var(--muted); font-size: 0.85rem; margin-top: 6px; font-family: 'Space Mono', monospace; }
 
-        header { margin-bottom: 48px; }
-
-        header h1 {
-            font-family: 'Space Mono', monospace;
-            font-size: 2rem;
-            color: var(--accent);
-            letter-spacing: -1px;
-        }
-
-        header p {
-            color: var(--muted);
-            font-size: 0.85rem;
-            margin-top: 6px;
-            font-family: 'Space Mono', monospace;
-        }
-
-        .add-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 40px;
-        }
-
-        .add-form input {
-            flex: 1;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 14px 18px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
-            border-radius: 4px;
-        }
-
-        .add-form input:focus { border-color: var(--accent); }
+        .add-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .add-form input[type="text"] { flex: 1; min-width: 180px; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 13px 16px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none; border-radius: 4px; transition: border-color 0.2s; }
+        .add-form input[type="text"]:focus { border-color: var(--accent); }
         .add-form input::placeholder { color: var(--muted); }
-
-        .add-form button {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 14px 24px;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: opacity 0.2s;
-        }
-
+        .add-form select { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 13px 14px; font-family: 'Space Mono', monospace; font-size: 0.8rem; outline: none; border-radius: 4px; cursor: pointer; }
+        .add-form button { background: var(--accent); color: #000; border: none; padding: 13px 22px; font-family: 'Space Mono', monospace; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-radius: 4px; }
         .add-form button:hover { opacity: 0.85; }
 
-        .stats {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border);
-        }
+        .filters { display: flex; gap: 8px; margin-bottom: 24px; }
+        .filters a { font-family: 'Space Mono', monospace; font-size: 0.75rem; padding: 6px 14px; border-radius: 4px; text-decoration: none; border: 1px solid var(--border); color: var(--muted); transition: all 0.2s; }
+        .filters a.active, .filters a:hover { color: #000; }
+        .filters a[href*="all"].active, .filters a[href*="all"]:hover { background: var(--accent); border-color: var(--accent); }
+        .filters a[href*="high"].active, .filters a[href*="high"]:hover { background: var(--high); border-color: var(--high); }
+        .filters a[href*="medium"].active, .filters a[href*="medium"]:hover { background: var(--medium); border-color: var(--medium); }
+        .filters a[href*="low"].active, .filters a[href*="low"]:hover { background: var(--low); border-color: var(--low); }
 
+        .stats { display: flex; gap: 24px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
         .stat { font-family: 'Space Mono', monospace; font-size: 0.8rem; }
         .stat span { color: var(--accent); font-size: 1.4rem; display: block; }
 
         .todo-list { display: flex; flex-direction: column; gap: 8px; }
+        .todo-item { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--border); border-radius: 4px; display: flex; align-items: center; gap: 14px; padding: 16px 18px; transition: border-color 0.2s; }
+        .todo-item.priority-high { border-left-color: var(--high); }
+        .todo-item.priority-medium { border-left-color: var(--medium); }
+        .todo-item.priority-low { border-left-color: var(--low); }
+        .todo-item.done { opacity: 0.45; }
 
-        .todo-item {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 16px 18px;
-            transition: border-color 0.2s;
-            animation: slideIn 0.2s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .todo-item:hover { border-color: #444; }
-        .todo-item.done { opacity: 0.5; }
-
-        .todo-item a.toggle {
-            width: 22px; height: 22px;
-            border: 2px solid var(--border);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            text-decoration: none;
-            flex-shrink: 0;
-            transition: all 0.2s;
-            color: transparent;
-            font-size: 12px;
-        }
-
-        .todo-item.done a.toggle {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #000;
-        }
-
+        .todo-item a.toggle { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; flex-shrink: 0; transition: all 0.2s; color: transparent; font-size: 12px; }
+        .todo-item.done a.toggle { background: var(--accent); border-color: var(--accent); color: #000; }
         .todo-item a.toggle:hover { border-color: var(--accent); }
 
-        .todo-text {
-            flex: 1;
-            font-size: 0.95rem;
-        }
+        .todo-text { flex: 1; font-size: 0.95rem; }
+        .todo-item.done .todo-text { text-decoration: line-through; color: var(--muted); }
 
-        .todo-item.done .todo-text {
-            text-decoration: line-through;
-            color: var(--muted);
-        }
+        .priority-badge { font-family: 'Space Mono', monospace; font-size: 0.65rem; padding: 2px 8px; border-radius: 3px; font-weight: 700; }
+        .badge-high { background: #ff444422; color: var(--high); }
+        .badge-medium { background: #ffaa0022; color: var(--medium); }
+        .badge-low { background: #00ff8822; color: var(--low); }
 
-        .todo-date {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--muted);
-        }
+        .todo-date { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+        .todo-item a.delete { color: var(--muted); text-decoration: none; font-size: 1.1rem; transition: color 0.2s; flex-shrink: 0; }
+        .todo-item a.delete:hover { color: #ff4444; }
 
-        .todo-item a.delete {
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 1.1rem;
-            line-height: 1;
-            transition: color 0.2s;
-            flex-shrink: 0;
-        }
-
-        .todo-item a.delete:hover { color: var(--danger); }
-
-        .empty {
-            text-align: center;
-            padding: 60px 0;
-            color: var(--muted);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.85rem;
-        }
-
+        .empty { text-align: center; padding: 60px 0; color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.85rem; }
         .empty span { display: block; font-size: 2rem; margin-bottom: 12px; }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
-        <h1>// todo_list</h1>
-        <p>flask + mysql — simple task manager</p>
+       <h1>// todo_list v2 🚀</h1>
+       <p>flask + mysql — simple task manager | version 2</p>
     </header>
 
     <form class="add-form" action="/add" method="POST">
         <input type="text" name="title" placeholder="Add a new task..." autocomplete="off" required>
+        <select name="priority">
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+        </select>
         <button type="submit">+ ADD</button>
     </form>
 
+    <div class="filters">
+        <a href="/" class="{% if filter_priority == 'all' %}active{% endif %}">ALL</a>
+        <a href="/?priority=high" class="{% if filter_priority == 'high' %}active{% endif %}">🔴 HIGH</a>
+        <a href="/?priority=medium" class="{% if filter_priority == 'medium' %}active{% endif %}">🟡 MEDIUM</a>
+        <a href="/?priority=low" class="{% if filter_priority == 'low' %}active{% endif %}">🟢 LOW</a>
+    </div>
+
     {% set total = todos|length %}
     {% set done = todos|selectattr('completed')|list|length %}
-
     <div class="stats">
         <div class="stat"><span>{{ total }}</span>total</div>
         <div class="stat"><span>{{ done }}</span>done</div>
@@ -201,18 +100,16 @@
     <div class="todo-list">
         {% if todos %}
             {% for todo in todos %}
-            <div class="todo-item {% if todo.completed %}done{% endif %}">
+            <div class="todo-item priority-{{ todo.priority }} {% if todo.completed %}done{% endif %}">
                 <a class="toggle" href="/toggle/{{ todo.id }}">{% if todo.completed %}✓{% endif %}</a>
                 <span class="todo-text">{{ todo.title }}</span>
+                <span class="priority-badge badge-{{ todo.priority }}">{{ todo.priority }}</span>
                 <span class="todo-date">{{ todo.created_at.strftime('%b %d') }}</span>
                 <a class="delete" href="/delete/{{ todo.id }}">×</a>
             </div>
             {% endfor %}
         {% else %}
-            <div class="empty">
-                <span>📋</span>
-                no tasks yet — add one above
-            </div>
+            <div class="empty"><span>📋</span>no tasks yet — add one above</div>
         {% endif %}
     </div>
 </div>
